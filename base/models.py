@@ -6,12 +6,11 @@ from django.contrib.auth.models import User
 class Agency(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    register = models.TextField()
-    approval = models.TextField()
+    register = models.TextField(max_length=50)
+    approval = models.TextField(max_length=50)
 
     def __str__(self):
         return self.name
-
 
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -26,7 +25,7 @@ class UserLocation(models.Model):
     state = models.CharField(max_length=50)
     municipal = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=50)
-    street_adress = models.TextField()
+    street_adress = models.TextField(max_length=50)
 
     def __str__(self):
         return "%s, %s, %s" % (self.state, self.municipal, self.street_adress)
@@ -62,7 +61,7 @@ class OfferLocation(models.Model):
     state = models.CharField(max_length=50)
     municipal = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=50)
-    street_adress = models.TextField()
+    street_adress = models.TextField(max_length=50)
     longtitude = models.FloatField(max_length=50)
     latitude = models.FloatField(max_length=50)
 
