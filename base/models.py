@@ -93,4 +93,3 @@ class Favourite(models.Model):
 
 
 
-#test
