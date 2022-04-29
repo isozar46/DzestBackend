@@ -8,4 +8,4 @@ from .serializers import OfferSerializer
 def offerList(request):
     offers = Offer.objects.all()
     serializer = OfferSerializer(offers, many=True)
-    return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(serializer.data, safe=False, json_dumps_params={'indent': 2})
