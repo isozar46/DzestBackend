@@ -38,6 +38,14 @@ class Offer(models.Model):
     # gaz = models.BooleanField()
     # internet = models.BooleanField()
     
+    # offer location
+    state = models.CharField(max_length=50)
+    municipal = models.CharField(max_length=50)
+    zip_code = models.CharField(max_length=50)
+    street_adress = models.TextField(max_length=50)
+    longtitude = models.FloatField(max_length=50, null=True, blank=True)
+    latitude = models.FloatField(max_length=50, null=True, blank=True)
+
     class Meta:
         ordering = ['-updated', '-created']
 
@@ -51,17 +59,17 @@ class OfferImages(models.Model):
     def __str__(self):
         return self.offer.title
 
-class OfferLocation(models.Model):
-    offer = models.OneToOneField(Offer, on_delete=models.CASCADE)
-    state = models.CharField(max_length=50)
-    municipal = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=50)
-    street_adress = models.TextField(max_length=50)
-    longtitude = models.FloatField(max_length=50)
-    latitude = models.FloatField(max_length=50)
+# class OfferLocation(models.Model):
+#     offer = models.OneToOneField(Offer, on_delete=models.CASCADE)
+#     state = models.CharField(max_length=50)
+#     municipal = models.CharField(max_length=50)
+#     zip_code = models.CharField(max_length=50)
+#     street_adress = models.TextField(max_length=50)
+#     longtitude = models.FloatField(max_length=50)
+#     latitude = models.FloatField(max_length=50)
 
-    def __str__(self):
-        return "%s, %s, %s, %s, %s" % (self.state, self.municipal, self.street_adress, self.longtitude, self.latitude)
+#     def __str__(self):
+#         return "%s, %s, %s, %s, %s" % (self.state, self.municipal, self.street_adress, self.longtitude, self.latitude)
 
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

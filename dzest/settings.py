@@ -26,9 +26,8 @@ SECRET_KEY = 'django-insecure-f5d3nf$fc(m)-@g$p0zo6#0@dyaut*g6543xuo4%5z*45&e(c_
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.1.3',
+    '192.168.1.10',
 ]
-
 
 # Application definition
 
@@ -130,3 +129,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    # 'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+    'DATETIME_FORMAT': "%Y/%m/%d",
+}
