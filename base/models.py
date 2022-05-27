@@ -1,10 +1,11 @@
+from email.policy import default
 from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Agency(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     register = models.TextField(max_length=50)
     approval = models.TextField(max_length=50)
@@ -54,7 +55,7 @@ class Offer(models.Model):
 
 class OfferImages(models.Model):
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
-    # image =
+    image = models.ImageField(null=True, upload_to='offer_images')
 
     def __str__(self):
         return self.offer.title
@@ -72,18 +73,21 @@ class OfferImages(models.Model):
 #         return "%s, %s, %s, %s, %s" % (self.state, self.municipal, self.street_adress, self.longtitude, self.latitude)
 
 class Client(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     followed = models.ManyToManyField(Agency, related_name='followed', blank=True,)
     favourites = models.ManyToManyField(Offer, related_name='favourites', blank=True,)
 
     def __str__(self):
         return "%s %s" % (self.user.first_name, self.user.last_name)
 
-class Message(models.Model):
+class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
-    text = models.CharField(max_length=50)
+    text = models.CharField(max_length=200)
     created = models.DateTimeField(auto_now_add=True)
+
+    depth = models.IntegerField(default=0)
+    refrence = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s: %s, %s" % (self.user, self.text, self.created)
