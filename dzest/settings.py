@@ -25,10 +25,7 @@ SECRET_KEY = 'django-insecure-f5d3nf$fc(m)-@g$p0zo6#0@dyaut*g6543xuo4%5z*45&e(c_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '192.168.1.10',
-    '192.168.43.193',
-]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -159,8 +156,18 @@ REST_FRAMEWORK = {
     ],
     # 'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
     'DATETIME_FORMAT': "%Y/%m/%d",
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
 }
 
 
 # server url
 SERVER_URL = 'http://192.168.1.10:8000'
+
+AUTH_USER_MODEL = 'base.User'
+
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'base.api.serializers.CustomRegisterSerializer'
+# }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -1,7 +1,9 @@
+from dataclasses import field
 from rest_framework import serializers
-from ..models import Offer, OfferImages, Comment
+from ..models import Offer, OfferImages, Comment, User
 from django.db.models import Q
 from django.conf import settings
+from dj_rest_auth.registration.serializers import RegisterSerializer
 
 class ImageSerialiser(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_image_url')
@@ -56,3 +58,17 @@ class DetailedOfferSerializer(serializers.ModelSerializer):
             Q(depth=0)
         )
         return CommentSerializer(comments, many=True).data
+
+
+class AddOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = '__all__'
+
+class AddImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OfferImages
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return OfferImages.objects.create(**validated_data)
