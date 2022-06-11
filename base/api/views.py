@@ -90,7 +90,7 @@ class AddImage(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+# def my_offers(request):
 
 @api_view(['GET'])
 def current_user(request):
