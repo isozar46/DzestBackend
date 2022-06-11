@@ -2,15 +2,24 @@ from django.shortcuts import render
 from django.db.models import Q
 from django.http import JsonResponse
 from ..models import Offer, OfferImages
-from .serializers import AddImageSerializer, SimpleOfferSerializer, DetailedOfferSerializer, ImageSerialiser, AddOfferSerializer
+from .serializers import ( AddImageSerializer, SimpleOfferSerializer, DetailedOfferSerializer,
+                            ImageSerialiser, AddOfferSerializer, AgencyCustomRegistrationSerializer,
+                            ClientCustomRegistrationSerializer, UserDetailsSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status, mixins, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.parsers import FormParser, MultiPartParser
-
+from rest_framework.pagination import PageNumberPagination
+from dj_rest_auth.registration.views import RegisterView
 # Create your views here.
+
+class AgencyRegistrationView(RegisterView):
+    serializer_class = AgencyCustomRegistrationSerializer
+
+class ClientRegistrationView(RegisterView):
+    serializer_class = ClientCustomRegistrationSerializer
 
 def offerList(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -42,6 +51,7 @@ class AddOffer(mixins.CreateModelMixin,generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+
 class ListOffers(mixins.ListModelMixin,generics.GenericAPIView):
     permission_classes = []
     authentication_classes = []
@@ -50,6 +60,18 @@ class ListOffers(mixins.ListModelMixin,generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+# class ListOffers(APIView):
+#     permission_classes = []
+#     authentication_classes = []
+#     pagination_class = PageNumberPagination
+
+#     def get(self, request, format=None):
+#         offers = Offer.objects.all()
+#         paginator = PageNumberPagination()
+#         page = paginator.paginate_queryset(offers, request)
+#         serializer = SimpleOfferSerializer(page, many=True)
+#         return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
 class AddImage(APIView):
     parser_classes = (FormParser, MultiPartParser)
@@ -66,3 +88,23 @@ class AddImage(APIView):
             )
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+@api_view(['GET'])
+def current_user(request):
+    serializer = UserDetailsSerializer(request.user)
+    return Response(serializer.data)
+
+
+# @api_view(['GET'])
+# def current_user(request):
+#     user = request.user
+#     return Response({
+#         'user_id': user.id,
+#         'username': user.username,
+#         'email': user.email,
+#         'is_client': user.is_client,
+#         'is_agency': user.is_agency
+# })

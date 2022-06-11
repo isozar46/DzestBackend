@@ -4,29 +4,22 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class User(AbstractUser):
-    USER_TYPE_CHOICES = (
-      (1, 'client'),
-      (2, 'agency'),
-    )
-    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES, null=True)
+    is_client = models.BooleanField(default=False)
+    is_agency = models.BooleanField(default=False)
 
     email = models.EmailField(unique=True,null=False)
-
-    avatar = models.ImageField(null=True, upload_to='avatars')
+    avatar = models.ImageField(null=True, upload_to='avatars', default='defaults/default-avatar.jpg')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
 class Agency(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    agency = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    register = models.TextField(max_length=50)
-    approval = models.TextField(max_length=50)
     phone_number = models.CharField(max_length=20)
 
     state = models.CharField(max_length=50, null=True)
     municipal = models.CharField(max_length=50, null=True)
-    zip_code = models.CharField(max_length=50, null=True)
     street_adress = models.TextField(max_length=50, null=True)
 
     def __str__(self):
@@ -76,11 +69,10 @@ class OfferImages(models.Model):
         return self.offer.title
 
 class Client(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    favourites = models.ManyToManyField(Offer, related_name='favourites', blank=True,)
+    client = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "%s" % (self.user.username)
+        return "%s" % (self.client.username)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

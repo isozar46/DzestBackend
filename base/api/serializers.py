@@ -1,9 +1,59 @@
 from dataclasses import field
 from rest_framework import serializers
-from ..models import Offer, OfferImages, Comment, User
+from ..models import Offer, OfferImages, Comment, User, Agency, Client
 from django.db.models import Q
 from django.conf import settings
 from dj_rest_auth.registration.serializers import RegisterSerializer
+
+
+class AgencyIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agency
+        fields = ('id')
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    agency_id = serializers.PrimaryKeyRelatedField(source='agency', many=False, read_only=True)
+    client_id = serializers.PrimaryKeyRelatedField(source='client', many=False, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'agency_id', 'client_id', 'username', 'email', 'is_agency', 'is_client')
+
+class AgencyCustomRegistrationSerializer(RegisterSerializer):
+    agency = serializers.PrimaryKeyRelatedField(read_only=True,) #by default allow_null = False
+    name = serializers.CharField(required=True)
+    
+    def get_cleaned_data(self):
+            data = super(AgencyCustomRegistrationSerializer, self).get_cleaned_data()
+            extra_data = {
+                'name' : self.validated_data.get('name', ''),
+            }
+            data.update(extra_data)
+            return data
+
+    def save(self, request):
+        user = super(AgencyCustomRegistrationSerializer, self).save(request)
+        user.is_agency = True
+        user.save()
+        agency = Agency(agency=user, name=self.cleaned_data.get('name'),)
+        agency.save()
+        return user
+
+class ClientCustomRegistrationSerializer(RegisterSerializer):
+    client = serializers.PrimaryKeyRelatedField(read_only=True,) #by default allow_null = False
+    
+    def get_cleaned_data(self):
+            data = super(ClientCustomRegistrationSerializer, self).get_cleaned_data()
+            return data
+
+    def save(self, request):
+        user = super(ClientCustomRegistrationSerializer, self).save(request)
+        user.is_client = True
+        user.save()
+        client = Client(client=user,)
+        client.save()
+        return user
 
 class ImageSerialiser(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_image_url')
