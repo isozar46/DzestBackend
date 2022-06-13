@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.db.models import Q
 from django.http import JsonResponse
-from ..models import Offer, OfferImages
+from ..models import Offer, OfferImages, Favourite, Client
 from .serializers import ( AddImageSerializer, SimpleOfferSerializer, DetailedOfferSerializer,
                             ImageSerialiser, AddOfferSerializer, AgencyCustomRegistrationSerializer,
-                            ClientCustomRegistrationSerializer, UserDetailsSerializer)
+                            ClientCustomRegistrationSerializer, UserDetailsSerializer, 
+                            AddFavouriteSerializer,)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status, mixins, generics
 from rest_framework.response import Response
@@ -43,8 +44,8 @@ def offerImages(request):
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'indent': 2})
 
 class AddOffer(mixins.CreateModelMixin,generics.GenericAPIView):
-    permission_classes = []
-    authentication_classes = []
+    # permission_classes = []
+    # authentication_classes = []
     queryset = Offer.objects.none()
     serializer_class = AddOfferSerializer
 
@@ -108,3 +109,25 @@ def current_user(request):
 #         'is_client': user.is_client,
 #         'is_agency': user.is_agency
 # })
+
+class AddFavourite(mixins.CreateModelMixin,generics.GenericAPIView):
+    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    queryset = Favourite.objects.none()
+    serializer_class = AddFavouriteSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+@api_view(['DELETE'])
+def offer_delete(request, pk):
+    try:
+        offer = Offer.objects.get(id=pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        offer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+

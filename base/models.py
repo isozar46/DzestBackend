@@ -34,25 +34,11 @@ class Offer(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     price = models.IntegerField()
 
-    OFFER_TYPE_CHOICES = (
-      ('Apartement', 'Apartement'),
-      ('Offices and businesses', 'Offices and businesses'),
-      ('Land', 'Land'),
-    )
-    property_type = models.TextField(choices=OFFER_TYPE_CHOICES, null=True)
-
-    TRANS_TYPE_CHOICES = (
-      ('Rent', 'Rent'),
-      ('Sale', 'Sale'),
-    )
-    transaction_type = models.TextField(choices=TRANS_TYPE_CHOICES, null=True)
-
     property_area = models.IntegerField(null=True)
     
     # offer location
     state = models.CharField(max_length=50,)
     municipal = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=50)
     street_adress = models.TextField(max_length=50)
 
     class Meta:
@@ -88,8 +74,8 @@ class Comment(models.Model):
 
 
 class Favourite(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, related_name='favorites', on_delete=models.CASCADE)
+    offer = models.ForeignKey(Offer, related_name='favorites', on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s likes %s" % (self.client, self.offer)

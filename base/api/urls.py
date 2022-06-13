@@ -10,7 +10,11 @@ urlpatterns = [
     path('add_offer/', views.AddOffer.as_view()),
     path('add_image/', views.AddImage.as_view()),
 
+    path('add_favourite/', views.AddFavourite.as_view()),
+
     path('user_details/', views.current_user),
+
+    path('delete_offer/<str:pk>', views.offer_delete),
 
     path('auth/', include('dj_rest_auth.urls')),
     path('auth/registration/', include('dj_rest_auth.registration.urls')),

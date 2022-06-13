@@ -1,6 +1,6 @@
 from dataclasses import field
 from rest_framework import serializers
-from ..models import Offer, OfferImages, Comment, User, Agency, Client
+from ..models import Favourite, Offer, OfferImages, Comment, User, Agency, Client
 from django.db.models import Q
 from django.conf import settings
 from dj_rest_auth.registration.serializers import RegisterSerializer
@@ -122,3 +122,11 @@ class AddImageSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return OfferImages.objects.create(**validated_data)
+
+class AddFavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourite
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return Favourite.objects.create(**validated_data)
